@@ -1,0 +1,9 @@
+{
+  "name": "cro-prompt-analysis",
+  "version": "1.0.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "vercel-build": "echo 'No build step required'"
+  }
+}

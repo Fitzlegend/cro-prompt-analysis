@@ -1,0 +1,101 @@
+<script>
+    // Simulate file input click when clicking the upload area
+    document.querySelectorAll('.upload-area').forEach(area => {
+        area.addEventListener('click', () => {
+            const input = area.querySelector('input[type="file"]');
+            input.click();
+        });
+
+        const input = area.querySelector('input[type="file"]');
+        input.addEventListener('change', () => {
+            const text = area.querySelector('.upload-text');
+            if (input.files.length > 0) {
+                text.textContent = `Selected: ${input.files[0].name}`;
+            } else {
+                text.textContent = 'Click to upload your file';
+            }
+        });
+    });
+
+    async function submitPrompt(promptNumber) {
+        // Collect input data
+        let data = {};
+        switch(promptNumber) {
+            case 1:
+                data.file = document.getElementById('file1').files[0]?.name || 'No file uploaded';
+                data.desc = document.getElementById('desc1').value;
+                break;
+            case 2:
+                data.category = document.getElementById('category2').value;
+                data.file = document.getElementById('file2').files[0]?.name || 'No file uploaded';
+                data.data = document.getElementById('data2').value;
+                break;
+            case 3:
+                data.file = document.getElementById('file3').files[0]?.name || 'No file uploaded';
+                data.desc = document.getElementById('desc3').value;
+                break;
+            case 4:
+                data.file = document.getElementById('file4').files[0]?.name || 'No file uploaded';
+                data.desc = document.getElementById('desc4').value;
+                break;
+            case 5:
+                data.file = document.getElementById('file5').files[0]?.name || 'No file uploaded';
+                data.desc = document.getElementById('desc5').value;
+                break;
+            case 6:
+                data.file = document.getElementById('file6').files[0]?.name || 'No file uploaded';
+                data.desc = document.getElementById('desc6').value;
+                break;
+            case 7:
+                data.file = document.getElementById('file7').files[0]?.name || 'No file uploaded';
+                data.desc = document.getElementById('desc7').value;
+                break;
+            case 8:
+                data.file = document.getElementById('file8').files[0]?.name || 'No file uploaded';
+                data.data = document.getElementById('data8').value;
+                break;
+            case 9:
+                data.file = document.getElementById('file9').files[0]?.name || 'No file uploaded';
+                data.text = document.getElementById('text9').value;
+                break;
+            case 10:
+                data.file1 = document.getElementById('file10a').files[0]?.name || 'No file uploaded';
+                data.competitor = document.getElementById('competitor10').value;
+                data.file2 = document.getElementById('file10b').files[0]?.name || 'No file uploaded';
+                data.mySite = document.getElementById('mySite10').value;
+                data.desc = document.getElementById('desc10').value;
+                break;
+            case 11:
+                data.file = document.getElementById('file11').files[0]?.name || 'No file uploaded';
+                data.desc = document.getElementById('desc11').value;
+                break;
+        }
+        data.prompt = promptNumber;
+
+        // Send the data to the API endpoint
+        try {
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            // Redirect to results page with the response data
+            const queryString = new URLSearchParams({
+                prompt: promptNumber,
+                result: JSON.stringify(result)
+            }).toString();
+            window.location.href = `results.html?${queryString}`;
+        } catch (error) {
+            console.error('Error submitting prompt:', error);
+            alert('An error occurred while submitting the prompt. Please try again.');
+        }
+    }
+</script>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #6a0dad;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            font-size: 1.5em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            color: #555;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(90deg, #6a0dad, #8a2be2);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: transform 0.1s, background 0.3s;
+        }
+        .back-button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #5a0c9d, #7a1bd2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">Analysis Results</h1>
+        <div id="content"></div>
+        <a href="index.html" class="back-button">Back to Main Page</a>
+    </div>
+
+    <script>
+        // Get the prompt number and result from the URL
+        const params = new URLSearchParams(window.location.search);
+        const promptNumber = parseInt(params.get('prompt'));
+        const result = JSON.parse(params.get('result') || '{}');
+
+        // Set the title and content based on the prompt
+        const titleElement = document.getElementById('title');
+        const contentElement = document.getElementById('content');
+
+        let title = `Prompt #${promptNumber}: Analysis Results`;
+        let content = result.response || '<p>No analysis available. Please go back and try again.</p>';
+
+        titleElement.innerHTML = title;
+        contentElement.innerHTML = content;
+    </script>
+</body>
+</html>
