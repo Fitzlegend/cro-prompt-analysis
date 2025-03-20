@@ -1,101 +1,371 @@
-<script>
-    // Simulate file input click when clicking the upload area
-    document.querySelectorAll('.upload-area').forEach(area => {
-        area.addEventListener('click', () => {
-            const input = area.querySelector('input[type="file"]');
-            input.click();
-        });
-
-        const input = area.querySelector('input[type="file"]');
-        input.addEventListener('change', () => {
-            const text = area.querySelector('.upload-text');
-            if (input.files.length > 0) {
-                text.textContent = `Selected: ${input.files[0].name}`;
-            } else {
-                text.textContent = 'Click to upload your file';
-            }
-        });
-    });
-
-    async function submitPrompt(promptNumber) {
-        // Collect input data
-        let data = {};
-        switch(promptNumber) {
-            case 1:
-                data.file = document.getElementById('file1').files[0]?.name || 'No file uploaded';
-                data.desc = document.getElementById('desc1').value;
-                break;
-            case 2:
-                data.category = document.getElementById('category2').value;
-                data.file = document.getElementById('file2').files[0]?.name || 'No file uploaded';
-                data.data = document.getElementById('data2').value;
-                break;
-            case 3:
-                data.file = document.getElementById('file3').files[0]?.name || 'No file uploaded';
-                data.desc = document.getElementById('desc3').value;
-                break;
-            case 4:
-                data.file = document.getElementById('file4').files[0]?.name || 'No file uploaded';
-                data.desc = document.getElementById('desc4').value;
-                break;
-            case 5:
-                data.file = document.getElementById('file5').files[0]?.name || 'No file uploaded';
-                data.desc = document.getElementById('desc5').value;
-                break;
-            case 6:
-                data.file = document.getElementById('file6').files[0]?.name || 'No file uploaded';
-                data.desc = document.getElementById('desc6').value;
-                break;
-            case 7:
-                data.file = document.getElementById('file7').files[0]?.name || 'No file uploaded';
-                data.desc = document.getElementById('desc7').value;
-                break;
-            case 8:
-                data.file = document.getElementById('file8').files[0]?.name || 'No file uploaded';
-                data.data = document.getElementById('data8').value;
-                break;
-            case 9:
-                data.file = document.getElementById('file9').files[0]?.name || 'No file uploaded';
-                data.text = document.getElementById('text9').value;
-                break;
-            case 10:
-                data.file1 = document.getElementById('file10a').files[0]?.name || 'No file uploaded';
-                data.competitor = document.getElementById('competitor10').value;
-                data.file2 = document.getElementById('file10b').files[0]?.name || 'No file uploaded';
-                data.mySite = document.getElementById('mySite10').value;
-                data.desc = document.getElementById('desc10').value;
-                break;
-            case 11:
-                data.file = document.getElementById('file11').files[0]?.name || 'No file uploaded';
-                data.desc = document.getElementById('desc11').value;
-                break;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRO Prompt Analysis Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
         }
-        data.prompt = promptNumber;
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .box h2 {
+            color: #6a0dad;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .box p {
+            color: #555;
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .box input[type="text"],
+        .box textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .upload-area {
+            position: relative;
+            border: 2px dashed #6a0dad;
+            background-color: #f8f4ff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: background-color 0.3s;
+        }
+        .upload-area:hover {
+            background-color: #f0e8ff;
+        }
+        .upload-area label {
+            display: block;
+            color: #6a0dad;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .upload-area input[type="file"] {
+            display: none;
+        }
+        .upload-area .upload-text {
+            color: #555;
+            font-size: 0.9em;
+        }
+        .upload-area .upload-icon {
+            font-size: 2em;
+            color: #6a0dad;
+            margin-bottom: 10px;
+        }
+        .box button {
+            background: linear-gradient(90deg, #6a0dad, #8a2be2);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.3s;
+        }
+        .box button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #5a0c9d, #7a1bd2);
+        }
+    </style>
+</head>
+<body>
+    <h1>CRO Prompt Analysis Tool</h1>
+    <div class="container">
+        <!-- Prompt #1 -->
+        <div class="box">
+            <h2>Prompt #1: Homepage Analysis</h2>
+            <p>Act as a CRO expert with 20 years of experience and a deep understanding of behavioral economics and psychology. Here’s my homepage as a PDF: [attach file]. Identify potential friction points in the design, layout, or messaging that could be causing a drop in conversions. Suggest actionable improvements based on human decision-making principles and best practices for e-commerce.</p>
+            <div class="upload-area">
+                <label for="file1">Upload PDF or Image (Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your homepage file</div>
+                <input type="file" id="file1" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="desc1" placeholder="Alternatively, describe your homepage design here (e.g., layout, colors, CTAs, messaging)"></textarea>
+            <button onclick="submitPrompt(1)">Submit</button>
+        </div>
 
-        // Send the data to the API endpoint
-        try {
-            const response = await fetch('/api/analyze', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+        <!-- Prompt #2 -->
+        <div class="box">
+            <h2>Prompt #2: Finding Category Entry Points</h2>
+            <p>You are a 20-year expert in CRO, product, and behavioral economics. Based on my category: [describe category] and this dataset: [upload or describe data], identify emotional and practical Category Entry Points (CEPs) my audience is likely to resonate with. Explain why each CEP could be effective from a psychological perspective and suggest how to implement them on my website or campaigns.</p>
+            <input type="text" id="category2" placeholder="Describe your category">
+            <div class="upload-area">
+                <label for="file2">Upload Dataset (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your dataset file (or describe below)</div>
+                <input type="file" id="file2" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="data2" placeholder="Alternatively, describe your dataset here"></textarea>
+            <button onclick="submitPrompt(2)">Submit</button>
+        </div>
+
+        <!-- Prompt #3 -->
+        <div class="box">
+            <h2>Prompt #3: Heatmap Analysis</h2>
+            <p>Using your expertise in CRO, behavioral economics, and psychology, analyze this heatmap of my website: [upload heatmap or describe data]. Identify user behaviors, bottlenecks, or areas of confusion. Suggest adjustments that account for psychological biases like decision fatigue or loss aversion to improve usability and drive conversions.</p>
+            <div class="upload-area">
+                <label for="file3">Upload Heatmap (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your heatmap file</div>
+                <input type="file" id="file3" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="desc3" placeholder="Alternatively, describe your heatmap data here (e.g., areas of high/low engagement)"></textarea>
+            <button onclick="submitPrompt(3)">Submit</button>
+        </div>
+
+        <!-- Prompt #4 -->
+        <div class="box">
+            <h2>Prompt #4: A/B Test Results Evaluation</h2>
+            <p>As a CRO expert with 20 years of experience, analyze the A/B test results I’ve uploaded: [attach metrics, screenshots, or data]. Explain why one variant outperformed the other based on psychological and behavioral principles. Provide insights on what worked, what didn’t, and suggest what to test next to leverage that behavior.</p>
+            <div class="upload-area">
+                <label for="file4">Upload A/B Test Results (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your A/B test results</div>
+                <input type="file" id="file4" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="desc4" placeholder="Alternatively, describe your A/B test results here (e.g., metrics, variants)"></textarea>
+            <button onclick="submitPrompt(4)">Submit</button>
+        </div>
+
+        <!-- Prompt #5 -->
+        <div class="box">
+            <h2>Prompt #5: Optimizing Product Pages</h2>
+            <p>Acting as a 20-year CRO expert and behavioral psychologist, analyze this product page: [attach PDF]. Identify elements that could be optimized to reduce bounce rates and increase conversions. Focus on clarity, trust signals, and behavioral triggers like social proof, urgency, or anchoring.</p>
+            <div class="upload-area">
+                <label for="file5">Upload Product Page (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your product page file</div>
+                <input type="file" id="file5" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="desc5" placeholder="Alternatively, describe your product page here (e.g., layout, elements, pricing)"></textarea>
+            <button onclick="submitPrompt(5)">Submit</button>
+        </div>
+
+        <!-- Prompt #6 -->
+        <div class="box">
+            <h2>Prompt #6: Checkout Flow Insights</h2>
+            <p>You are a CRO expert with extensive knowledge of psychology and user behavior. Here’s my store’s checkout process: [attach PDF or describe steps]. Identify friction points and risks of abandonment, then suggest actionable improvements. Use behavioral principles such as the endowment effect or commitment bias to create a more seamless checkout experience.</p>
+            <div class="upload-area">
+                <label for="file6">Upload Checkout Process (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your checkout process file</div>
+                <input type="file" id="file6" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="desc6" placeholder="Alternatively, describe your checkout process here (e.g., steps, form fields)"></textarea>
+            <button onclick="submitPrompt(6)">Submit</button>
+        </div>
+
+        <!-- Prompt #7 -->
+        <div class="box">
+            <h2>Prompt #7: Heatmap & Scrollmap Insights</h2>
+            <p>As a CRO expert with a deep understanding of human behavior, analyze this heatmap and scrollmap: [upload or describe data]. Provide insights about user engagement, scrolling behavior, and where psychological friction might be occurring. Suggest prioritized changes that align with how users make decisions.</p>
+            <div class="upload-area">
+                <label for="file7">Upload Heatmap & Scrollmap (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your heatmap and scrollmap file</div>
+                <input type="file" id="file7" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="desc7" placeholder="Alternatively, describe your heatmap and scrollmap data here (e.g., engagement patterns)"></textarea>
+            <button onclick="submitPrompt(7)">Submit</button>
+        </div>
+
+        <!-- Prompt #8 -->
+        <div class="box">
+            <h2>Prompt #8: Testing for Page Speed</h2>
+            <p>As a CRO expert and behavioral economist, analyze this page speed data: [attach or describe metrics]. Explain how slower loading times might affect user psychology (e.g., impatience, perceived trustworthiness) and provide solutions to improve speed while maintaining a high-quality design.</p>
+            <div class="upload-area">
+                <label for="file8">Upload Page Speed Data (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your page speed data (or describe below)</div>
+                <input type="file" id="file8" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="data8" placeholder="Alternatively, describe your page speed metrics here (e.g., load time, FCP)"></textarea>
+            <button onclick="submitPrompt(8)">Submit</button>
+        </div>
+
+        <!-- Prompt #9 -->
+        <div class="box">
+            <h2>Prompt #9: Landing Page Copy Audit</h2>
+            <p>Act as a 20-year experienced CRO expert and behavioral psychologist. Analyze the copy from my landing page: [attach PDF or paste text]. Identify areas where messaging could be clearer, more persuasive, or better aligned with user intent. Suggest alternatives that leverage psychological triggers like loss aversion, exclusivity, or social proof.</p>
+            <div class="upload-area">
+                <label for="file9">Upload Landing Page Copy (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your landing page copy (or paste below)</div>
+                <input type="file" id="file9" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="text9" placeholder="Alternatively, paste or describe your landing page copy here"></textarea>
+            <button onclick="submitPrompt(9)">Submit</button>
+        </div>
+
+        <!-- Prompt #10 -->
+        <div class="box">
+            <h2>Prompt #10: Competitor Benchmarking</h2>
+            <p>Using your CRO and behavioral psychology expertise, compare this competitor’s website: [attach URL, screenshots, or PDF] to mine: [attach URL, screenshots, or PDF]. Highlight where they outperform me and suggest strategies to differentiate my site using behavioral insights, such as improving trust signals or creating a stronger value perception.</p>
+            <div class="upload-area">
+                <label for="file10a">Upload Competitor's Website (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload competitor's website file (or enter URL below)</div>
+                <input type="file" id="file10a" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <input type="text" id="competitor10" placeholder="Alternatively, enter competitor's URL">
+            <div class="upload-area">
+                <label for="file10b">Upload Your Website (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your website file (or enter URL below)</div>
+                <input type="file" id="file10b" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <input type="text" id="mySite10" placeholder="Alternatively, enter your website URL">
+            <textarea id="desc10" placeholder="Alternatively, describe both websites here (e.g., design, features)"></textarea>
+            <button onclick="submitPrompt(10)">Submit</button>
+        </div>
+
+        <!-- Prompt #11 -->
+        <div class="box">
+            <h2>Prompt #11: Visual Hierarchy Analysis</h2>
+            <p>As a CRO expert and behavioral psychologist, analyze the visual hierarchy of my homepage or product page: [attach file]. Explain how it might impact user behavior and suggest design adjustments to improve clarity, guide attention, and increase conversions.</p>
+            <div class="upload-area">
+                <label for="file11">Upload Page File (PDF or Image, Optional)</label>
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload your homepage or product page file</div>
+                <input type="file" id="file11" accept=".pdf,.png,.jpg,.jpeg">
+            </div>
+            <textarea id="desc11" placeholder="Alternatively, describe your page's visual hierarchy here (e.g., layout, emphasis)"></textarea>
+            <button onclick="submitPrompt(11)">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        // Simulate file input click when clicking the upload area
+        document.querySelectorAll('.upload-area').forEach(area => {
+            area.addEventListener('click', () => {
+                const input = area.querySelector('input[type="file"]');
+                input.click();
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            const input = area.querySelector('input[type="file"]');
+            input.addEventListener('change', () => {
+                const text = area.querySelector('.upload-text');
+                if (input.files.length > 0) {
+                    text.textContent = `Selected: ${input.files[0].name}`;
+                } else {
+                    text.textContent = 'Click to upload your file';
+                }
+            });
+        });
 
-            const result = await response.json();
-            // Redirect to results page with the response data
-            const queryString = new URLSearchParams({
-                prompt: promptNumber,
-                result: JSON.stringify(result)
-            }).toString();
-            window.location.href = `results.html?${queryString}`;
-        } catch (error) {
-            console.error('Error submitting prompt:', error);
-            alert('An error occurred while submitting the prompt. Please try again.');
+        async function submitPrompt(promptNumber) {
+            // Collect input data
+            let data = {};
+            switch(promptNumber) {
+                case 1:
+                    data.file = document.getElementById('file1').files[0]?.name || 'No file uploaded';
+                    data.desc = document.getElementById('desc1').value;
+                    break;
+                case 2:
+                    data.category = document.getElementById('category2').value;
+                    data.file = document.getElementById('file2').files[0]?.name || 'No file uploaded';
+                    data.data = document.getElementById('data2').value;
+                    break;
+                case 3:
+                    data.file = document.getElementById('file3').files[0]?.name || 'No file uploaded';
+                    data.desc = document.getElementById('desc3').value;
+                    break;
+                case 4:
+                    data.file = document.getElementById('file4').files[0]?.name || 'No file uploaded';
+                    data.desc = document.getElementById('desc4').value;
+                    break;
+                case 5:
+                    data.file = document.getElementById('file5').files[0]?.name || 'No file uploaded';
+                    data.desc = document.getElementById('desc5').value;
+                    break;
+                case 6:
+                    data.file = document.getElementById('file6').files[0]?.name || 'No file uploaded';
+                    data.desc = document.getElementById('desc6').value;
+                    break;
+                case 7:
+                    data.file = document.getElementById('file7').files[0]?.name || 'No file uploaded';
+                    data.desc = document.getElementById('desc7').value;
+                    break;
+                case 8:
+                    data.file = document.getElementById('file8').files[0]?.name || 'No file uploaded';
+                    data.data = document.getElementById('data8').value;
+                    break;
+                case 9:
+                    data.file = document.getElementById('file9').files[0]?.name || 'No file uploaded';
+                    data.text = document.getElementById('text9').value;
+                    break;
+                case 10:
+                    data.file1 = document.getElementById('file10a').files[0]?.name || 'No file uploaded';
+                    data.competitor = document.getElementById('competitor10').value;
+                    data.file2 = document.getElementById('file10b').files[0]?.name || 'No file uploaded';
+                    data.mySite = document.getElementById('mySite10').value;
+                    data.desc = document.getElementById('desc10').value;
+                    break;
+                case 11:
+                    data.file = document.getElementById('file11').files[0]?.name || 'No file uploaded';
+                    data.desc = document.getElementById('desc11').value;
+                    break;
+            }
+            data.prompt = promptNumber;
+
+            // Send the data to the API endpoint
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                // Redirect to results page with the response data
+                const queryString = new URLSearchParams({
+                    prompt: promptNumber,
+                    result: JSON.stringify(result)
+                }).toString();
+                window.location.href = `results.html?${queryString}`;
+            } catch (error) {
+                console.error('Error submitting prompt:', error);
+                alert('An error occurred while submitting the prompt. Please try again.');
+            }
         }
-    }
-</script>
+    </script>
+</body>
+</html>
